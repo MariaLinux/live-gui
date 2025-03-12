@@ -1,0 +1,55 @@
+name: MariaLinux Builder Workflow
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Build Image
+      run: |
+        docker run --rm --privileged --network=host \
+          -v ${{ github.workspace }}:/workspace \
+          -v /catalyst:/var/tmp/catalyst \
+          -v /images:/images \
+          -v /etc/catalyst:/etc/catalyst \
+          marialinux_builder \
+          /bin/bash -c 'cd /workspace && \
+            # Prepare Repositories
+            echo "Prepare Repositories" && \
+            emerge --sync -q -v && \
+            # Copy config files
+            echo "Copy config files" && \
+            rm -rf /var/tmp/catalyst/* && \
+            mkdir -p /var/tmp/catalyst/config && \
+            cp -r config/stages/* /var/tmp/catalyst/config && \
+            # Create snapshot
+            echo "Create snapshot" && \
+            catalyst -s stable && \
+            export latest_snapshot=$(find /var/tmp/catalyst/snapshots/ -name "*.sqfs" -type f -printf "%T@ %p\n" | sort -n | tail -1 | cut -d" " -f2-) && \
+            export hash=$(echo $latest_snapshot | sed "s|.*gentoo-\([a-f0-9]*\)\.sqfs$|\1|") && \
+            # Prepare spec file
+            echo "Prepare spec file" && \
+            mkdir -p /var/tmp/catalyst/builds/default && \
+            cp stage* /var/tmp/catalyst/builds/default && \
+            sed -i "s/@TREEISH@/$hash/g" /var/tmp/catalyst/builds/default/stage1.spec && \
+            export profile_stage3__base_url="https://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd" && \
+            wget --no-verbose -P /var/tmp/catalyst/builds/default ${profile_stage3__base_url}/latest-stage3-amd64-desktop-systemd.txt && \
+            export latest_stage3=$(sed -n "/^stage3/s/ .*$//p" /var/tmp/catalyst/builds/default/latest-stage3-amd64-desktop-systemd.txt) && \
+            wget --no-verbose -P /var/tmp/catalyst/builds/default ${profile_stage3__base_url}/${latest_stage3} && \
+            wget --no-verbose -P /var/tmp/catalyst/builds/default ${profile_stage3__base_url}/${latest_stage3}.sha256 && \
+            cd /var/tmp/catalyst/builds/default && \
+            sha256sum -c ${latest_stage3}.sha256 && \
+            sed -i "s|stage3-amd64-@TIMESTAMP@|${latest_stage3}|g" /var/tmp/catalyst/builds/default/stage1.spec && \
+            # Build
+            echo "Build..." && \
+            catalyst -f stage1.spec && \
+            echo "Stage1 built successfully!"'
