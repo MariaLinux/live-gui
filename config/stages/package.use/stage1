@@ -5,3 +5,4 @@ app-alternatives/tar gnu
 app-alternatives/gzip reference
 app-alternatives/bzip2 reference
 sys-devel/gcc openmp
+sys-fs/lvm2 lvm
