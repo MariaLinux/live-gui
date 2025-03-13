@@ -2,7 +2,7 @@ subarch: amd64
 version_stamp: live-gui
 target: livecd-stage1
 rel_type: default
-profile: default/linux/amd64/23.0/desktop/gnome/systemd
+profile: default/linux/amd64/23.0/desktop/gnome
 snapshot_treeish: @TREEISH@
 source_subpath: default/stage3-amd64-@TIMESTAMP@
 compression_mode: pixz

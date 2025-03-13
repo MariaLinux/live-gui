@@ -41,9 +41,9 @@ jobs:
             mkdir -p /var/tmp/catalyst/builds/default && \
             cp stage* /var/tmp/catalyst/builds/default && \
             sed -i "s/@TREEISH@/$hash/g" /var/tmp/catalyst/builds/default/stage1.spec && \
-            export profile_stage3__base_url="https://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64-desktop-systemd" && \
-            wget --no-verbose -P /var/tmp/catalyst/builds/default ${profile_stage3__base_url}/latest-stage3-amd64-desktop-systemd.txt && \
-            export latest_stage3=$(sed -n "/^stage3/s/ .*$//p" /var/tmp/catalyst/builds/default/latest-stage3-amd64-desktop-systemd.txt) && \
+            export profile_stage3__base_url="https://gentoo.osuosl.org/releases/amd64/autobuilds/current-stage3-amd64-desktop-openrc" && \
+            wget --no-verbose -P /var/tmp/catalyst/builds/default ${profile_stage3__base_url}/latest-stage3-amd64-desktop-openrc.txt && \
+            export latest_stage3=$(sed -n "/^stage3/s/ .*$//p" /var/tmp/catalyst/builds/default/latest-stage3-amd64-desktop-openrc.txt) && \
             wget --no-verbose -P /var/tmp/catalyst/builds/default ${profile_stage3__base_url}/${latest_stage3} && \
             wget --no-verbose -P /var/tmp/catalyst/builds/default ${profile_stage3__base_url}/${latest_stage3}.sha256 && \
             cd /var/tmp/catalyst/builds/default && \
