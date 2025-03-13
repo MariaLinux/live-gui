@@ -3,3 +3,4 @@ app-arch/unrar unRAR
 sys-apps/man-pages-posix freedist
 sys-block/tw_cli LSI-tw_cli
 sys-firmware/b43-firmware Broadcom
+sys-firmware/ipw2100-firmware ipw2100-fw
