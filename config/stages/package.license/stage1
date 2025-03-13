@@ -2,3 +2,4 @@ sys-kernel/linux-firmware linux-fw-redistributable no-source-code
 app-arch/unrar unRAR
 sys-apps/man-pages-posix freedist
 sys-block/tw_cli LSI-tw_cli
+sys-firmware/b43-firmware Broadcom
