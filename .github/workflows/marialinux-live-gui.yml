@@ -53,3 +53,27 @@ jobs:
             echo "Build..." && \
             catalyst -f stage1.spec && \
             echo "Stage1 built successfully!"'
+      
+    - name: Build ISO
+      run: |
+        docker run --rm --privileged --network=host \
+          -v ${{ github.workspace }}:/workspace \
+          -v /catalyst:/var/tmp/catalyst \
+          -v /images:/images \
+          -v /etc/catalyst:/etc/catalyst \
+          marialinux_builder \
+          /bin/bash -c 'cd /workspace && \
+            # Find snapshot
+            echo "Find snapshot" && \
+            export latest_snapshot=$(find /var/tmp/catalyst/snapshots/ -name "*.sqfs" -type f -printf "%T@ %p\n" | sort -n | tail -1 | cut -d" " -f2-) && \
+            export hash=$(echo $latest_snapshot | sed "s|.*gentoo-\([a-f0-9]*\)\.sqfs$|\1|") && \
+            # Prepare spec file
+            echo "Prepare spec file" && \
+            sed -i "s/@TREEISH@/$hash/g" /var/tmp/catalyst/builds/default/stage2.spec && \
+            sed -i "s|@REPODIR@|/workspace|g" /var/tmp/catalyst/builds/default/stage2.spec && \
+            export timestamp=$(date +"%Y-%m-%d-%H%M%S") && \
+            sed -i "s|@TIMESTAMP@|${timestamp}|g" /var/tmp/catalyst/builds/default/stage2.spec && \
+            # Build
+            echo "Build..." && \
+            catalyst -f stage2.spec && \
+            echo "ISO built successfully!"'
