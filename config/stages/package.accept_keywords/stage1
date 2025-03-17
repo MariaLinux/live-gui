@@ -1,3 +1,4 @@
 app-emulation/spice-vdagent *
 gnome-base/gnome-light *
 sys-firmware/b43-firmware ~amd64
+net-wireless/broadcom-sta ~amd64
