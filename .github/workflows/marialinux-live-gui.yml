@@ -43,6 +43,7 @@ jobs:
             sed -i "s/@TREEISH@/$hash/g" /var/tmp/catalyst/builds/default/stage1.spec && \
             sed -i "s/@TREEISH@/$hash/g" /var/tmp/catalyst/builds/default/stage2.spec && \
             sed -i "s|@REPODIR@|/workspace|g" /var/tmp/catalyst/builds/default/stage2.spec && \
+            cat /var/tmp/catalyst/builds/default/stage2.spec && \
             export timestamp=$(date +"%Y-%m-%d-%H%M%S") && \
             sed -i "s|@TIMESTAMP@|${timestamp}|g" /var/tmp/catalyst/builds/default/stage2.spec && \
             export profile_stage3__base_url="https://gentoo.osuosl.org/releases/amd64/autobuilds/current-stage3-amd64-desktop-openrc" && \
